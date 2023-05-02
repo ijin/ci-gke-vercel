@@ -27,6 +27,7 @@ jobs:
 
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v0
+
       - name: Describe my-service-account
         run: gcloud iam service-accounts describe ${{ vars.STAGING_SERVICE_ACCOUNT }}
 
