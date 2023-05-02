@@ -1,0 +1,36 @@
+name: Preview Env
+
+on:
+  pull_request:
+    branches:
+      - 'fix-*'
+      - 'feat-*'
+
+jobs:
+  gke_api_request:
+    runs-on: ubuntu-latest
+
+    permissions:
+        contents: read
+        id-token: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v1
+        with:
+          workload_identity_provider: $${{ vars.STAGING_WIP }}
+          service_account: ${{ vars.STAGING_SERVICE_ACCOUNT }}
+
+      - name: Get GKE credentials
+        uses: google-github-actions/get-gke-credentials@v1
+        with:
+          cluster_name: ${{ vars.STAGING_GKE_CLUSTER_NAME }}
+          location: ${{ vars.STAGING_GKE_CLUSTER_REGION }}
+
+      - name: Make API request to GKE cluster
+        run: |
+          # kubectl config use-context ${{ secrets.GKE_CLUSTER_NAME }}
+          kubectl get pods
