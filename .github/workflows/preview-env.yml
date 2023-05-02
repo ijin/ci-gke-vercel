@@ -22,7 +22,7 @@ jobs:
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v1
         with:
-          workload_identity_provider: $${{ vars.STAGING_WIP }}
+          workload_identity_provider: ${{ vars.STAGING_WIP }}
           service_account: ${{ vars.STAGING_SERVICE_ACCOUNT }}
 
       - name: Set up Cloud SDK
