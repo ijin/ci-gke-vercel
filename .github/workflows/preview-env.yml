@@ -31,7 +31,11 @@ jobs:
           cluster_name: ${{ vars.STAGING_GKE_CLUSTER_NAME }}
           location: ${{ vars.STAGING_GKE_CLUSTER_REGION }}
 
-      - name: Make API request to GKE cluster
+      - name: Port forward hydra admin port
         run: |
-          kubectl get pods
           kubectl get svc
+          kubectl port-forward svc/hydra-admin  8080:4445
+
+      - name: Make API request to hydra
+        run: |
+          curl localhost:8080/clients
