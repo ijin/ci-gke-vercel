@@ -25,11 +25,11 @@ jobs:
           workload_identity_provider: ${{ vars.STAGING_WIP }}
           service_account: ${{ vars.STAGING_SERVICE_ACCOUNT }}
 
-      # - name: Set up Cloud SDK
-      #   uses: google-github-actions/setup-gcloud@v0
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v0
 
-      # - name: Describe my-service-account
-      #   run: gcloud iam service-accounts describe ${{ vars.STAGING_SERVICE_ACCOUNT }}
+      - name: Describe my-service-account
+        run: gcloud iam service-accounts describe ${{ vars.STAGING_SERVICE_ACCOUNT }}
 
       - name: Get GKE credentials
         uses: google-github-actions/get-gke-credentials@v1
