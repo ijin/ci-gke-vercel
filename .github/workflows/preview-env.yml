@@ -34,7 +34,7 @@ jobs:
       - name: Port forward hydra admin port
         run: |
           kubectl get svc
-          kubectl port-forward svc/hydra-admin  8080:4445
+          kubectl port-forward svc/hydra-admin 8080:4445 &
 
       - name: Make API request to hydra
         run: |
