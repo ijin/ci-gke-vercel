@@ -20,9 +20,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Generate Vercel URI
-        run: echo "VERCEL_URI=https://${{ github.ref_name }}-${{ github.repository_owner }}.vercel.app" >> $GITHUB_ENV
-
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v1
         with:
@@ -40,7 +37,10 @@ jobs:
           kubectl get svc
           kubectl port-forward svc/hydra-admin 8080:4445 &
 
-      - name: Set_redirect_uris_
+      - name: Generate Vercel URI
+        run: echo "VERCEL_URI=https://${{ github.ref_name }}-${{ github.repository_owner }}.vercel.app" >> $GITHUB_ENV
+
+      - name: Set redirect_uris and post_logout_redirect_uris in hydra
         run: |
           CLIENT=$(curl -s localhost:8080/clients/${{ secrets.STAGING_CLIENT_ID }} | jq .)
           UPDATED_REDIRECT_URIS=$(echo $CLIENT | jq  '.redirect_uris += ["'"$VERCEL_URI"'/api/auth/callback/ocx-idp"] | .redirect_uris | unique')
@@ -48,7 +48,6 @@ jobs:
           curl -s -X PATCH "http://localhost:8080/clients/${{ secrets.STAGING_CLIENT_ID }}" -H 'Content-Type: application/json' -d "[{\"op\": \"replace\", \"path\": \"/redirect_uris\", \"value\": $UPDATED_REDIRECT_URIS}]"
           curl -s -X PATCH "http://localhost:8080/clients/${{ secrets.STAGING_CLIENT_ID }}" -H 'Content-Type: application/json' -d "[{\"op\": \"replace\", \"path\": \"/post_logout_redirect_uris\", \"value\": $UPDATED_POST_LOGOUT_URIS}]"
 
-
-      - name: Add Vercel URI to _redirect_uris_
+      - name: Set Vercel URI as env var
         run: |
           echo vercel
