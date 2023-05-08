@@ -47,8 +47,8 @@ jobs:
           UPDATED_POST_LOGOUT_URIS=$(echo $CLIENT | jq  '.post_logout_redirect_uris += ["'"$VERCEL_URI"'"] | .post_logout_redirect_uris | unique')
           echo $UPDATED_REDIRECT_URIS
           echo $UPDATED_POST_LOGOUT_URIS
+          curl -X PATCH "http://localhost:8080/clients/${{ secrets.STAGING_CLIENT_ID }}" -H 'Content-Type: application/json' -d "'"[{"op": "replace", "path": "/redirect_uris", "value": $UPDATED_REDIRECT_URIS}]"'"
 
       - name: Add Vercel URI to _redirect_uris_
         run: |
-          echo $UPDATED_REDIRECT_URIS | jq .
-          echo $UPDATED_POST_LOGOUT_URIS | jq .
+          echo vercel
