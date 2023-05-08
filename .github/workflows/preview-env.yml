@@ -45,9 +45,8 @@ jobs:
           CLIENT=$(curl -s localhost:8080/clients/${{ secrets.STAGING_CLIENT_ID }} | jq .)
           UPDATED_REDIRECT_URIS=$(echo $CLIENT | jq  '.redirect_uris += ["'"$VERCEL_URI"'/api/auth/callback/ocx-idp"] | .redirect_uris | unique')
           UPDATED_POST_LOGOUT_URIS=$(echo $CLIENT | jq  '.post_logout_redirect_uris += ["'"$VERCEL_URI"'"] | .post_logout_redirect_uris | unique')
-          echo $UPDATED_REDIRECT_URIS
-          echo $UPDATED_POST_LOGOUT_URIS
-          curl -X PATCH "http://localhost:8080/clients/${{ secrets.STAGING_CLIENT_ID }}" -H 'Content-Type: application/json' -d "[{\"op\": \"replace\", \"path\": \"/redirect_uris\", \"value\": $UPDATED_REDIRECT_URIS}]"
+          curl -s -X PATCH "http://localhost:8080/clients/${{ secrets.STAGING_CLIENT_ID }}" -H 'Content-Type: application/json' -d "[{\"op\": \"replace\", \"path\": \"/redirect_uris\", \"value\": $UPDATED_REDIRECT_URIS}]"
+          curl -s -X PATCH "http://localhost:8080/clients/${{ secrets.STAGING_CLIENT_ID }}" -H 'Content-Type: application/json' -d "[{\"op\": \"replace\", \"path\": \"/post_logout_redirect_uris"\", \"value\": $UPDATED_POST_LOGOUT_URIS}]"
 
 
       - name: Add Vercel URI to _redirect_uris_
