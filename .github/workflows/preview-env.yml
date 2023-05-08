@@ -43,8 +43,8 @@ jobs:
       - name: Get _redirect_uris_
         run: |
           echo "CLIENT=$(curl -s localhost:8080/clients/${{ secrets.STAGING_CLIENT_ID }} | jq .)" >> $GITHUB_ENV
-          echo "UPDATED_REDIRECT_URIS=$(echo $CLIENT | jq  '.[].redirect_uris += ["$VERCEL_URI/api/auth/callback/ocx-idp"] | .[].redirect_uris | unique')" >> $GITHUB_ENV
-          echo "UPDATED_POST_LOGOUT_URIS=$(echo $CLIENT | jq  '.[].post_logout_redirect_uris += ["$VERCEL_URI"] | .[].post_logout_redirect_uris | unique')" >> $GITHUB_ENV
+          #echo "UPDATED_REDIRECT_URIS=$(echo $CLIENT | jq  '.[].redirect_uris += ["$VERCEL_URI/api/auth/callback/ocx-idp"] | .[].redirect_uris | unique')" >> $GITHUB_ENV
+          #echo "UPDATED_POST_LOGOUT_URIS=$(echo $CLIENT | jq  '.[].post_logout_redirect_uris += ["$VERCEL_URI"] | .[].post_logout_redirect_uris | unique')" >> $GITHUB_ENV
 
       - name: Add Vercel URI to _redirect_uris_
         run: |
