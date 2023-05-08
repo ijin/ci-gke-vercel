@@ -38,4 +38,4 @@ jobs:
 
       - name: Make API request to hydra
         run: |
-          curl localhost:8080/clients
+          curl -s localhost:8080/clients | jq .
