@@ -48,6 +48,11 @@ jobs:
           curl -s -X PATCH "http://localhost:8080/clients/${{ secrets.STAGING_CLIENT_ID }}" -H 'Content-Type: application/json' -d "[{\"op\": \"replace\", \"path\": \"/redirect_uris\", \"value\": $UPDATED_REDIRECT_URIS}]"
           curl -s -X PATCH "http://localhost:8080/clients/${{ secrets.STAGING_CLIENT_ID }}" -H 'Content-Type: application/json' -d "[{\"op\": \"replace\", \"path\": \"/post_logout_redirect_uris\", \"value\": $UPDATED_POST_LOGOUT_URIS}]"
 
-      - name: Set Vercel URI as env var
-        run: |
-          echo vercel
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+
+      - name: Pull Vercel Environment Information
+        run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Set Vercel env var
+        run: echo $VERCEL_URI | vercel env add NEXTAUTH_URL preview ${{ github.ref_name }} --token=${{ secrets.VERCEL_TOKEN }}
