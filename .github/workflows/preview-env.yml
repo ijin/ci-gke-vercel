@@ -9,7 +9,7 @@ on:
       - 'refactor-*'
 
 jobs:
-  gke_api_request:
+  create_preview_env:
     runs-on: ubuntu-latest
 
     permissions:
@@ -44,7 +44,7 @@ jobs:
         run: |
           CLIENT=$(curl -s localhost:8080/clients/${{ secrets.STAGING_CLIENT_ID }} | jq .)
           UPDATED_REDIRECT_URIS=$(echo $CLIENT | jq  '.redirect_uris += ["'"$VERCEL_URI"'/api/auth/callback/ocx-idp"] | .redirect_uris | unique')
-          UPDATED_POST_LOGOUT_URIS=$(echo $CLIENT | jq  '.post_logout_redirect_uris += ["'"$VERCEL_URI"'] | .post_logout_redirect_uris | unique')
+          UPDATED_POST_LOGOUT_URIS=$(echo $CLIENT | jq  '.post_logout_redirect_uris += ["'"$VERCEL_URI"'"] | .post_logout_redirect_uris | unique')
           echo $UPDATED_REDIRECT_URIS
           echo $UPDATED_POST_LOGOUT_URIS
 
