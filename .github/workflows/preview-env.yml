@@ -1,13 +1,15 @@
 name: Preview Env
 
 on:
-  pull_request:
+  # pull_request:
+  push:
     branches:
       - 'fix-*'
       - 'feat-*'
+      - 'refactor-*'
 
 jobs:
-  gke_api_request:
+  create_preview_env:
     runs-on: ubuntu-latest
 
     permissions:
@@ -21,7 +23,7 @@ jobs:
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v1
         with:
-          workload_identity_provider: $${{ vars.STAGING_WIP }}
+          workload_identity_provider: ${{ vars.STAGING_WIP }}
           service_account: ${{ vars.STAGING_SERVICE_ACCOUNT }}
 
       - name: Get GKE credentials
@@ -30,7 +32,22 @@ jobs:
           cluster_name: ${{ vars.STAGING_GKE_CLUSTER_NAME }}
           location: ${{ vars.STAGING_GKE_CLUSTER_REGION }}
 
-      - name: Make API request to GKE cluster
+      - name: Port forward hydra admin port
         run: |
-          # kubectl config use-context ${{ secrets.GKE_CLUSTER_NAME }}
-          kubectl get pods
+          kubectl get svc
+          kubectl port-forward svc/hydra-admin 8080:4445 &
+
+      - name: Generate Vercel URI
+        run: echo "VERCEL_URI=https://${{ github.ref_name }}-${{ github.repository_owner }}.vercel.app" >> $GITHUB_ENV
+
+      - name: Set redirect_uris and post_logout_redirect_uris in hydra
+        run: |
+          CLIENT=$(curl -s localhost:8080/clients/${{ secrets.STAGING_CLIENT_ID }} | jq .)
+          UPDATED_REDIRECT_URIS=$(echo $CLIENT | jq  '.redirect_uris += ["'"$VERCEL_URI"'/api/auth/callback/ocx-idp"] | .redirect_uris | unique')
+          UPDATED_POST_LOGOUT_URIS=$(echo $CLIENT | jq  '.post_logout_redirect_uris += ["'"$VERCEL_URI"'"] | .post_logout_redirect_uris | unique')
+          curl -s -X PATCH "http://localhost:8080/clients/${{ secrets.STAGING_CLIENT_ID }}" -H 'Content-Type: application/json' -d "[{\"op\": \"replace\", \"path\": \"/redirect_uris\", \"value\": $UPDATED_REDIRECT_URIS}]"
+          curl -s -X PATCH "http://localhost:8080/clients/${{ secrets.STAGING_CLIENT_ID }}" -H 'Content-Type: application/json' -d "[{\"op\": \"replace\", \"path\": \"/post_logout_redirect_uris\", \"value\": $UPDATED_POST_LOGOUT_URIS}]"
+
+      - name: Set Vercel URI as env var
+        run: |
+          echo vercel
