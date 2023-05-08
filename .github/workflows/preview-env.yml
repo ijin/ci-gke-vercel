@@ -40,15 +40,13 @@ jobs:
           kubectl get svc
           kubectl port-forward svc/hydra-admin 8080:4445 &
 
-      - name: Get _redirect_uris_
+      - name: Set_redirect_uris_
         run: |
-          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
-          echo "CLIENT<<$EOF" >> $GITHUB_ENV
-          curl -s localhost:8080/clients/${{ secrets.STAGING_CLIENT_ID }} | jq . >> $GITHUV_ENV
-          echo "$EOF" >> $GITHUB_ENV
-
-          #echo "UPDATED_REDIRECT_URIS=$(echo $CLIENT | jq  '.[].redirect_uris += ["$VERCEL_URI/api/auth/callback/ocx-idp"] | .[].redirect_uris | unique')" >> $GITHUB_ENV
-          #echo "UPDATED_POST_LOGOUT_URIS=$(echo $CLIENT | jq  '.[].post_logout_redirect_uris += ["$VERCEL_URI"] | .[].post_logout_redirect_uris | unique')" >> $GITHUB_ENV
+          CLIENT=$(curl -s localhost:8080/clients/${{ secrets.STAGING_CLIENT_ID }} | jq .)
+          UPDATED_REDIRECT_URIS=$(echo $CLIENT | jq  '.[].redirect_uris += ["$VERCEL_URI/api/auth/callback/ocx-idp"] | .[].redirect_uris | unique')
+          UPDATED_POST_LOGOUT_URIS=$(echo $CLIENT | jq  '.[].post_logout_redirect_uris += ["$VERCEL_URI"] | .[].post_logout_redirect_uris | unique')
+          echo $UPDATED_POST_LOGOUT_URIS
+          echo $UPDATED_POST_LOGOUT_URIS
 
       - name: Add Vercel URI to _redirect_uris_
         run: |
