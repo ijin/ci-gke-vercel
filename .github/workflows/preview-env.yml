@@ -38,4 +38,4 @@ jobs:
 
       - name: Make API request to hydra
         run: |
-          curl -s localhost:8080/clients | jq .
+          curl -s localhost:8080/clients/${{ secrets.STAGING_CLIENT_ID }} | jq .
