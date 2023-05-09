@@ -64,4 +64,5 @@ jobs:
           if npx vercel env ls preview ${{ github.head_ref }} --token=${{ secrets.VERCEL_TOKEN }} | grep -q NEXTAUTH_URL ; then
             npx vercel env rm NEXTAUTH_URL preview ${{ github.head_ref }} --yes --token=${{ secrets.VERCEL_TOKEN }}
           fi
+
       # write on pr comment
