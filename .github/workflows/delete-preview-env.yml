@@ -2,10 +2,6 @@ name: Delete Preview Env
 
 on:
   pull_request:
-    branches:
-      - fix-*
-      - feat-*
-      - refactor-*
     types:
       - closed
 
@@ -18,9 +14,9 @@ jobs:
         id-token: write
 
     if: |
-      startsWith(github.head_ref, 'fix-*') ||
-      startsWith(github.head_ref, 'feat-*') ||
-      startsWith(github.head_ref, 'refactor-*')
+      startsWith(github.head_ref, 'fix-') ||
+      startsWith(github.head_ref, 'feat-') ||
+      startsWith(github.head_ref, 'refactor-')
 
     steps:
       - name: Checkout code
@@ -67,4 +63,4 @@ jobs:
             vercel env rm NEXTAUTH_URL preview ${{ github.head_ref }} --yes --token=${{ secrets.VERCEL_TOKEN }}
           fi
       # write on pr comment
-      # caceh
+      # cache
