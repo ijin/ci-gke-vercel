@@ -2,6 +2,10 @@ name: Create Preview Env
 
 on:
   pull_request:
+    branches:
+      - fix-*
+      - feat-*
+      - refactor-*
     types:
       - opened
       - reopened
