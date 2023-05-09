@@ -54,11 +54,8 @@ jobs:
           cache: 'npm'
           cache-dependency-path: '**/.github/workflows/*.yml'
 
-      - name: Install Vercel CLI
-        run: npm install vercel
-
       - name: Pull Vercel Environment Information
-        run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
+        run: npx vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
 
       - name: Set Vercel env var
-        run: vercel env ls preview ${{ github.head_ref }} --token=${{ secrets.VERCEL_TOKEN }} | grep -q NEXTAUTH_URL || echo $VERCEL_URI | vercel env add NEXTAUTH_URL preview ${{ github.head_ref }} --token=${{ secrets.VERCEL_TOKEN }}
+        run: npx vercel env ls preview ${{ github.head_ref }} --token=${{ secrets.VERCEL_TOKEN }} | grep -q NEXTAUTH_URL || echo $VERCEL_URI | npx vercel env add NEXTAUTH_URL preview ${{ github.head_ref }} --token=${{ secrets.VERCEL_TOKEN }}
