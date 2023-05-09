@@ -51,16 +51,18 @@ jobs:
           curl -s -X PATCH "http://localhost:8080/clients/ocx-ui-gcp-stg-auth-client" -H 'Content-Type: application/json' -d "$POST_LOGOUT_URIS_PAYLOAD"
           curl -s -X PATCH "http://localhost:8080/clients/ocx-ui-gcp-stg-auth-client" -H 'Content-Type: application/json' -d "$REDIRECT_URIS_PAYLOAD"
 
-      - name: Install Vercel CLI
-        run: npm install --global vercel@latest
+      - uses: actions/setup-node@v3
+        with:
+          cache: 'npm'
+          cache-dependency-path: '**/.github/workflows/*.yml'
 
       - name: Pull Vercel Environment Information
-        run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
+        run: npx vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
 
       - name: Remove Vercel env var
         run: |
-          if vercel env ls preview ${{ github.head_ref }} --token=${{ secrets.VERCEL_TOKEN }} | grep -q NEXTAUTH_URL ; then
-            vercel env rm NEXTAUTH_URL preview ${{ github.head_ref }} --yes --token=${{ secrets.VERCEL_TOKEN }}
+          if npx vercel env ls preview ${{ github.head_ref }} --token=${{ secrets.VERCEL_TOKEN }} | grep -q NEXTAUTH_URL ; then
+            npx vercel env rm NEXTAUTH_URL preview ${{ github.head_ref }} --yes --token=${{ secrets.VERCEL_TOKEN }}
           fi
       # write on pr comment
       # cache
