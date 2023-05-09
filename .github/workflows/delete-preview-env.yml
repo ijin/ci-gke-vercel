@@ -51,6 +51,11 @@ jobs:
           curl -s -X PATCH "http://localhost:8080/clients/ocx-ui-gcp-stg-auth-client" -H 'Content-Type: application/json' -d "$POST_LOGOUT_URIS_PAYLOAD"
           curl -s -X PATCH "http://localhost:8080/clients/ocx-ui-gcp-stg-auth-client" -H 'Content-Type: application/json' -d "$REDIRECT_URIS_PAYLOAD"
 
+      - uses: actions/setup-node@v3
+        with:
+          cache: 'npm'
+          cache-dependency-path: '**/.github/workflows/*.yml'
+
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
 
