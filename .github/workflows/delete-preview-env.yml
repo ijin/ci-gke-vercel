@@ -2,10 +2,6 @@ name: Delete Preview Env
 
 on:
   pull_request:
-    branches:
-      - fix-*
-      - feat-*
-      - refactor-*
     types:
       - closed
 
