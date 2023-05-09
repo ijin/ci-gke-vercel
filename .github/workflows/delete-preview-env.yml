@@ -1,4 +1,4 @@
-name: Create Preview Env
+name: Delete Preview Env
 
 on:
   delete:
@@ -37,7 +37,7 @@ jobs:
           kubectl port-forward svc/hydra-admin 8080:4445 &
 
       - name: Generate Vercel URI
-        run: echo "VERCEL_URI=https://${{ github.event.repository.name }}-git-${{ github.ref_name }}-${{ github.repository_owner }}.vercel.app" >> $GITHUB_ENV
+        run: echo "VERCEL_URI=https://${{ github.event.repository.name }}-git-${{ github.event.ref }}-${{ github.repository_owner }}.vercel.app" >> $GITHUB_ENV
 
       - name: Set redirect_uris and post_logout_redirect_uris in hydra
         run: |
@@ -53,5 +53,8 @@ jobs:
       - name: Pull Vercel Environment Information
         run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
 
-      - name: Set Vercel env var
-        run: vercel env ls preview ${{ github.ref_name }} --token=${{ secrets.VERCEL_TOKEN }} | grep -q NEXTAUTH_URL && vercel env rm NEXTAUTH_URL preview ${{ github.ref_name }} --token=${{ secrets.VERCEL_TOKEN }}
+      - name: Remove Vercel env var
+        run: |
+          if vercel env ls preview ${{ github.event.ref }} --token=${{ secrets.VERCEL_TOKEN }} | grep -q NEXTAUTH_URL ; then
+            vercel env rm NEXTAUTH_URL preview ${{ github.event.ref }} --token=${{ secrets.VERCEL_TOKEN }}
+          fi
