@@ -6,8 +6,8 @@ on:
       - fix-*
       - feat-*
       - refactor-*
-      types:
-        - closed
+    types:
+      - closed
 
 jobs:
   delete_preview_env:
