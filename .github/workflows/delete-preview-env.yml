@@ -14,9 +14,9 @@ jobs:
         id-token: write
 
     if: |
-      startsWith(github.head_ref, 'fix-*') ||
-      startsWith(github.head_ref, 'feat-*') ||
-      startsWith(github.head_ref, 'refactor-*')
+      startsWith(github.head_ref, 'fix-') ||
+      startsWith(github.head_ref, 'feat-') ||
+      startsWith(github.head_ref, 'refactor-')
 
     steps:
       - name: Checkout code
