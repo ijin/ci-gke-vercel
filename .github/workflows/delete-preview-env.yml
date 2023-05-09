@@ -39,14 +39,14 @@ jobs:
       - name: Generate Vercel URI
         run: echo "VERCEL_URI=https://${{ github.event.repository.name }}-git-${{ github.event.ref }}-${{ github.repository_owner }}.vercel.app" >> $GITHUB_ENV
 
-      - name: Set redirect_uris and post_logout_redirect_uris in hydra
+      - name: Delete redirect_uris and post_logout_redirect_uris in hydra
         run: |
           CLIENT=$(curl -s localhost:8080/clients/${{ secrets.STAGING_CLIENT_ID }} | jq .)
           REDIRECT_URIS=$(echo $CLIENT | jq  '.redirect_uris -= ["'"$VERCEL_URI"'/api/auth/callback/ocx-idp"] | .redirect_uris')
           REDIRECT_URIS_PAYLOAD=$(echo $REDIRECT_URIS | jq '[{"op": "replace", "path": "/redirect_uris", "value": .}]')
           POST_LOGOUT_URIS_PAYLOAD=$(echo $REDIRECT_URIS_PAYLOAD | jq '[.[] | {op: "replace", path: "/post_logout_redirect_uris", value: [.value[] | sub("/api/auth/callback/ocx-idp"; "")]}]')
-          curl -s -X PATCH "http://localhost:8080/clients/ocx-ui-gcp-stg-auth-client" -H 'Content-Type: application/json' -d "$REDIRECT_URIS_PAYLOAD"
           curl -s -X PATCH "http://localhost:8080/clients/ocx-ui-gcp-stg-auth-client" -H 'Content-Type: application/json' -d "$POST_LOGOUT_URIS_PAYLOAD"
+          curl -s -X PATCH "http://localhost:8080/clients/ocx-ui-gcp-stg-auth-client" -H 'Content-Type: application/json' -d "$REDIRECT_URIS_PAYLOAD"
 
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
